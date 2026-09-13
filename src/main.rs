@@ -185,6 +185,17 @@ fn uptime() -> String {
     }
     "Unknown".into()
 }
+fn os_age() -> String {
+    if let Ok(metadata) = std::fs::metadata("/") {
+        if let Ok(created) = metadata.created() {
+            if let Ok(elapsed) = created.elapsed() {
+                let days = elapsed.as_secs() / 86400;
+                return format!("{} days", days);
+            }
+        }
+    }
+    "Unknown".into()
+}
 
 fn visual_width(s: &str) -> usize {
     let mut width = 0;
@@ -219,7 +230,7 @@ fn main() {
 
     // Pac-Man color bar with Gruvbox hex sequence
     let pacman_bar = format!(
-        "\x1b[38;2;215;153;33m\u{1cc6d} \x1b[0m \x1b[38;2;204;36;29m\u{f02a0}\x1b[0m \x1b[38;2;152;151;26m\u{f02a0}\x1b[0m \x1b[38;2;69;133;136m\u{f02a0}\x1b[0m \x1b[38;2;177;98;134m\u{f02a0}\x1b[0m \x1b[38;2;214;93;14m\u{f02a0}\x1b[0m \x1b[38;2;235;219;178m\u{f02a0}\x1b[0m \x1b[38;2;146;131;116m\u{f02a0}\x1b[0m "
+        "\x1b[38;2;215;153;33m󰮯 - \x1b[0m \x1b[38;2;204;36;29m\u{f02a0}\x1b[0m \x1b[38;2;152;151;26m\u{f02a0}\x1b[0m \x1b[38;2;69;133;136m\u{f02a0}\x1b[0m \x1b[38;2;177;98;134m\u{f02a0}\x1b[0m \x1b[38;2;214;93;14m\u{f02a0}\x1b[0m \x1b[38;2;235;219;178m\u{f02a0}\x1b[0m \x1b[38;2;146;131;116m\u{f02a0}\x1b[0m "
     );
 
     let info_lines = vec![
@@ -230,6 +241,7 @@ fn main() {
         format!("{}{}{} {}", c_system, pad_key("cpu"), c_reset, cpu()),
         format!("{}{}{} {}", c_system, pad_key("gpu"), c_reset, gpu()),
         format!("{}{}{} {}", c_system, pad_key("ram"), c_reset, memory()),
+        format!("{}{}{} {}", c_system, pad_key("os_age"), c_reset, os_age()),
         pacman_bar,
     ];
 
